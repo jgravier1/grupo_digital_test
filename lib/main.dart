@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grupo_digital_test/config/router/app_router.dart';
 
 void main() => runApp(const MyApp());
 
@@ -7,16 +8,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Material App Bar'),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
-      ),
+    return MaterialApp.router(
+      routerConfig: AppRouter().appRouter,
+      debugShowCheckedModeBanner: false,
+      title: 'ClimateMap',
+    
     );
   }
 }

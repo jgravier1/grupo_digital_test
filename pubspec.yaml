@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^16.2.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_lints: ^5.0.0

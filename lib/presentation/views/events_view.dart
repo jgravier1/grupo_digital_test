@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grupo_digital_test/presentation/widgets/events_card.dart';
 
 class EventsView extends StatefulWidget {
   const EventsView({super.key});
@@ -89,11 +90,13 @@ class _EventsViewState extends State<EventsView> {
                     const Text('Eventos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
                     const SizedBox(height: 16),
                     ...[
-                      _ForecastCard(icon: Icons.cloud, temp: '22°', day: 'Friday, 1 Nov'),
-                      _ForecastCard(icon: Icons.cloud_queue, temp: '19°', day: 'Sunday, 3 Nov'),
-                      _ForecastCard(icon: Icons.wb_cloudy, temp: '25°', day: 'Saturday, 2 Nov'),
-                      _ForecastCard(icon: Icons.cloud_queue, temp: '20°', day: 'Monday, 4 Nov'),
-                      _ForecastCard(icon: Icons.cloud_queue, temp: '20°', day: 'Monday, 4 Nov'),
+                      EventsCard(icon: Icons.cloud, type: 'Hail', datetime: '1 Nov', desc: '', isFavorite: false, onAction: () {  },),
+                      EventsCard(icon: Icons.cloud_queue, type: 'Rain', datetime: '3 Nov', desc: '', isFavorite: false, onAction: () {  },),
+                      EventsCard(icon: Icons.wb_cloudy, type: 'Cloudy', datetime: '2 Nov', desc: '', isFavorite: false, onAction: () {  },),
+                      EventsCard(icon: Icons.cloud_queue, type: 'Rain', datetime: '4 Nov', desc: '', isFavorite: false, onAction: () {  },),
+                      EventsCard(icon: Icons.cloud_queue, type: 'Rain', datetime: '4 Nov', desc: '', size: 20.0, isFavorite: false, onAction: () { 
+                        
+                       },),
                     ],
                   ],
                 ),
@@ -134,41 +137,3 @@ class _IndicatorWidget extends StatelessWidget {
   }
 }
 
-class _ForecastCard extends StatelessWidget {
-  final IconData icon;
-  final String temp;
-  final String day;
-  const _ForecastCard({
-    required this.icon,
-    required this.temp,
-    required this.day,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.black12),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey.shade100,
-            radius: 26,
-            child: Icon(icon, color: Colors.blueAccent, size: 28),
-          ),
-          const SizedBox(width: 18),
-          Text(temp, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500)),
-          const SizedBox(width: 18),
-          Expanded(
-            child: Text(day, style: const TextStyle(fontSize: 16, color: Colors.black54)),
-          ),
-        ],
-      ),
-    );
-  }
-}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:grupo_digital_test/presentation/provider/favorites_provider.dart';
 import 'package:grupo_digital_test/presentation/widgets/events_card.dart';
@@ -121,6 +122,10 @@ class _FavoritesViewState extends State<FavoritesView> {
                         showAddButton: false,
                         onAction: () {
                           favoritesProvider.removeFromFavorites(event.id);
+                        },
+                        event: event,
+                        onTap: () {
+                          context.push('/events-details', extra: event);
                         },
                       );
                     },

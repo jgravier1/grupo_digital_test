@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:grupo_digital_test/domain/entities/event_entity.dart';
 import 'package:grupo_digital_test/presentation/provider/weather_provider.dart';
 import 'package:grupo_digital_test/presentation/provider/favorites_provider.dart';
@@ -165,6 +166,10 @@ class _EventsViewState extends State<EventsView> {
                                    ),
                                    onAction: () {
                                      favoritesProvider.toggleFavorite(event);
+                                   },
+                                   event: event,
+                                   onTap: () {
+                                     context.push('/events-details', extra: event);
                                    },
                                  ),
                                )

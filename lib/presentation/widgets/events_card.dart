@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:grupo_digital_test/domain/entities/event_entity.dart';
 
 class EventsCard extends StatelessWidget {
   final IconData icon;
@@ -10,6 +11,8 @@ class EventsCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback onAction;
   final bool showAddButton;
+  final EventEntity? event;
+  final VoidCallback? onTap;
 
   const EventsCard({
     super.key,
@@ -21,19 +24,31 @@ class EventsCard extends StatelessWidget {
     required this.isFavorite,
     required this.onAction,
     this.showAddButton = true,
+    this.event,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.black12),
-      ),
-      child: Row(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.black12),
+          boxShadow: onTap != null ? [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 2),
+            ),
+          ] : null,
+        ),
+        child: Row(
         children: [
           CircleAvatar(
             backgroundColor: Colors.grey.shade100,
@@ -67,6 +82,7 @@ class EventsCard extends StatelessWidget {
             onPressed: onAction,
           ),
         ],
+      ),
       ),
     );
   }

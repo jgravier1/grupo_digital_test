@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:grupo_digital_test/domain/entities/event_entity.dart';
 import 'package:grupo_digital_test/presentation/screens/events_details_screen.dart';
 import 'package:grupo_digital_test/presentation/screens/forecast_screen.dart';
 import 'package:grupo_digital_test/presentation/screens/map_screen.dart';
@@ -20,7 +21,8 @@ class AppRouter {
         GoRoute(
           path: '/events-details',
           builder: (context, state) {
-            return EventsDetailsScreen();
+            final event = state.extra as EventEntity?;
+            return EventsDetailsScreen(event: event);
           },
         ),
     ],

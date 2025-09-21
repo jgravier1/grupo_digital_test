@@ -8,7 +8,7 @@ class WeatherMapper {
     List<DayEntity>? days;
     if (model.days.isNotEmpty) {
       days = model.days.map((day) => DayEntity(
-        datetime: day.datetime ?? '',
+        datetime: _parseDateTime(day.datetime),
         tempmax: day.tempmax ?? 0.0,
         tempmin: day.tempmin ?? 0.0,
         temp: day.temp ?? 0.0,
@@ -44,6 +44,28 @@ class WeatherMapper {
       longitude: model.longitude,
       days: days,
     );
+  }
+
+
+  static DateTime _parseDateTime(String? dateTimeString) {
+    if (dateTimeString == null || dateTimeString.isEmpty) {
+      return DateTime.now();
+    }
+
+    try {
+      if (dateTimeString.contains('T')) {
+        return DateTime.parse(dateTimeString);
+      }
+
+      if (dateTimeString.contains('-') && dateTimeString.length == 10) {
+        return DateTime.parse('${dateTimeString}T00:00:00.000Z');
+      }
+
+      return DateTime.parse(dateTimeString);
+    } catch (e) {
+      print('Error parseando datetime: $dateTimeString - $e');
+      return DateTime.now();
+    }
   }
 
   static String _getConditionString(Conditions? condition) {

@@ -60,7 +60,7 @@ class EventsCard extends StatelessWidget {
                   ? (isFavorite ? Icons.check_circle : Icons.add_circle_outline)
                   : Icons.delete_outline,
               color: showAddButton
-                  ? (isFavorite ? Colors.green : Colors.blueAccent)
+                  ? (isFavorite ? Colors.blueAccent : Colors.blueAccent)
                   : Colors.red,
             ),
             tooltip: showAddButton ? (isFavorite ? 'Agregado' : 'Agregar a favoritos') : 'Eliminar de favoritos',

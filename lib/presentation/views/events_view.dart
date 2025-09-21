@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:grupo_digital_test/domain/entities/event_entity.dart';
 import 'package:grupo_digital_test/presentation/provider/weather_provider.dart';
+import 'package:grupo_digital_test/presentation/provider/favorites_provider.dart';
 import 'package:grupo_digital_test/presentation/widgets/events_card.dart';
+import 'package:grupo_digital_test/data/services/events_service.dart';
 import 'package:provider/provider.dart';
 
 class EventsView extends StatefulWidget {
@@ -11,12 +14,20 @@ class EventsView extends StatefulWidget {
 }
 
 class _EventsViewState extends State<EventsView> {
+  late List<EventEntity> _events;
+
+  @override
+  void initState() {
+    super.initState();
+    _events = EventsService.getSampleEvents();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: SafeArea(
-        child: Consumer<WeatherProvider>(
-          builder: (context, weatherProvider, child) {
+        child: Consumer2<WeatherProvider, FavoritesProvider>(
+          builder: (context, weatherProvider, favoritesProvider, child) {
             if (weatherProvider.isLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (weatherProvider.errorMessage != null) {
@@ -42,16 +53,28 @@ class _EventsViewState extends State<EventsView> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text('${provider.temperature}°C', style: TextStyle(fontSize: 65)),
+                          Text(
+                            '${provider.temperature}°C',
+                            style: TextStyle(fontSize: 65),
+                          ),
                           const SizedBox(height: 2),
-                          Text(provider.condition, style: TextStyle(fontSize: 16)),
+                          Text(
+                            provider.condition,
+                            style: TextStyle(fontSize: 16),
+                          ),
                           const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('${provider.minTemp}°C', style: TextStyle(fontSize: 16)),
+                              Text(
+                                'Min:${provider.days?[0].tempmin}°C',
+                                style: TextStyle(fontSize: 16),
+                              ),
                               SizedBox(width: 20),
-                              Text('Max: ${provider.maxTemp}°C', style: TextStyle(fontSize: 16)),
+                              Text(
+                                'Max: ${provider.days?[1].tempmax}°C',
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ],
                           ),
                         ],
@@ -104,7 +127,7 @@ class _EventsViewState extends State<EventsView> {
                   ),
                   const SizedBox(height: 32),
                   // Events Section
-                   Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Container(
                       decoration: BoxDecoration(
@@ -130,49 +153,22 @@ class _EventsViewState extends State<EventsView> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          ...[
-                            EventsCard(
-                              icon: Icons.cloud,
-                              type: 'Hail',
-                              datetime: '1 Nov',
-                              desc: '',
-                              isFavorite: false,
-                              onAction: () {},
-                            ),
-                            EventsCard(
-                              icon: Icons.cloud_queue,
-                              type: 'Rain',
-                              datetime: '3 Nov',
-                              desc: '',
-                              isFavorite: false,
-                              onAction: () {},
-                            ),
-                            EventsCard(
-                              icon: Icons.wb_cloudy,
-                              type: 'Cloudy',
-                              datetime: '2 Nov',
-                              desc: '',
-                              isFavorite: false,
-                              onAction: () {},
-                            ),
-                            EventsCard(
-                              icon: Icons.cloud_queue,
-                              type: 'Rain',
-                              datetime: '4 Nov',
-                              desc: '',
-                              isFavorite: false,
-                              onAction: () {},
-                            ),
-                            EventsCard(
-                              icon: Icons.cloud_queue,
-                              type: 'Rain',
-                              datetime: '4 Nov',
-                              desc: '',
-                              size: 20.0,
-                              isFavorite: false,
-                              onAction: () {},
-                            ),
-                          ],
+                           ..._events
+                               .map(
+                                 (event) => EventsCard(
+                                   icon: EventsService.getEventIcon(event.type),
+                                   type: EventsService.getEventTypeDisplayName(event.type),
+                                   datetime: event.datetime,
+                                   desc: event.description,
+                                   isFavorite: favoritesProvider.isFavorite(
+                                     event.id,
+                                   ),
+                                   onAction: () {
+                                     favoritesProvider.toggleFavorite(event);
+                                   },
+                                 ),
+                               )
+                               .toList(),
                         ],
                       ),
                     ),

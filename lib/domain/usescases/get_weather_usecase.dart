@@ -4,7 +4,7 @@ import 'package:grupo_digital_test/domain/repositories/weather_repository.dart';
 class GetWeatherUseCase {
   final WeatherRepository repository;
   GetWeatherUseCase({required this.repository});
-  Future<WeatherEntity> execute() {
-    return repository.getWeather();
+  Future<WeatherEntity> execute({String? cityName}) {
+    return repository.getWeather(cityName: cityName);
   }
 }

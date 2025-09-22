@@ -8,9 +8,9 @@ class WeatherRepositoryImpl implements WeatherRepository {
   WeatherRepositoryImpl({required this.dataSource});
 
   @override
-  Future<WeatherEntity> getWeather() async {
+  Future<WeatherEntity> getWeather({String? cityName}) async {
     try {
-      final model = await dataSource.getWeather();
+      final model = await dataSource.getWeather(cityName: cityName);
       return WeatherMapper.toEntity(model);
     } catch (e) {
       throw Exception('Error obteniendo el clima: $e');
@@ -18,9 +18,9 @@ class WeatherRepositoryImpl implements WeatherRepository {
   }
 
  @override
-  Future<WeatherEntity> getLastFiveDays() async {
+  Future<WeatherEntity> getLastFiveDays({String? cityName}) async {
     try {
-      final model = await dataSource.getLastFiveDays();
+      final model = await dataSource.getLastFiveDays(cityName: cityName);
       return WeatherMapper.toEntity(model);
     } catch (e) {
       throw Exception('Error obteniendo los últimos 5 días: $e');

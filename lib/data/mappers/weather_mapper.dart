@@ -19,7 +19,9 @@ class WeatherMapper {
     }
 
     return WeatherEntity(
+      
       location: model.resolvedAddress,
+      address: model.address,
       description: model.description,
       temperature: current.temp ?? 0.0,
       feelsLike: current.feelslike ?? 0.0,

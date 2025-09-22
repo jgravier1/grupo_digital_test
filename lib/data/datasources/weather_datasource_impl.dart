@@ -18,13 +18,15 @@ class WeatherDataSourceImpl implements WeatherDataSource {
   }
 
   @override
-  Future<WeatherResponseModel> getWeather() async {
+  Future<WeatherResponseModel> getWeather({String? cityName}) async {
     if (!await _checkInternetConnection()) {
       throw Exception('Sin conexión a internet');
     }
 
+    final city = cityName ?? 'Barranquilla,CO';
+
     final response = await dio.get(
-      '${baseUrl}Barranquilla,CO?unitGroup=metric&lang=es&key=$apiKey',
+      '$baseUrl$city?unitGroup=metric&lang=es&key=$apiKey',
     );
     if (response.statusCode == 200 && response.data != null) {
       return WeatherResponseModel.fromJson(
@@ -36,13 +38,15 @@ class WeatherDataSourceImpl implements WeatherDataSource {
   }
 
   @override
-  Future<WeatherResponseModel> getLastFiveDays() async {
+  Future<WeatherResponseModel> getLastFiveDays({String? cityName}) async {
     if (!await _checkInternetConnection()) {
       throw Exception('Sin conexión a internet');
     }
 
+    final city = cityName ?? 'Barranquilla,CO';
+
     final response = await dio.get(
-      '${baseUrl}Baranoa,CO/last5days?unitGroup=metric&lang=es&key=$apiKey',
+      '$baseUrl$city/last5days?unitGroup=metric&lang=es&key=$apiKey',
     );
     if (response.statusCode == 200 && response.data != null) {
       return WeatherResponseModel.fromJson(

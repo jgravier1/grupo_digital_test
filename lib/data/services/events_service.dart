@@ -34,15 +34,15 @@ class EventsService {
   static IconData getEventIcon(String type) {
     switch (type.toLowerCase()) {
       case 'hail':
-        return Icons.grain; // Icono de granizo
+        return Icons.grain; 
       case 'earthquake':
-        return Icons.vibration; // Icono de terremoto
+        return Icons.vibration; 
       case 'tornado':
-        return Icons.cyclone; // Icono de tornado
+        return Icons.cyclone; 
       case 'wind':
-        return Icons.air; // Icono de viento
+        return Icons.air; 
       default:
-        return Icons.warning; // Icono de advertencia por defecto
+        return Icons.warning; 
     }
   }
 

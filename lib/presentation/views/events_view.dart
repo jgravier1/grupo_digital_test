@@ -139,7 +139,7 @@ class _EventsViewState extends State<EventsView> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  provider.location,
+                  provider.address,
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w400,

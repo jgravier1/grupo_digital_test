@@ -1,5 +1,4 @@
 
-// Widget personalizado para mostrar toda la info
 import 'package:flutter/material.dart';
 
 class ForecastCard extends StatelessWidget {

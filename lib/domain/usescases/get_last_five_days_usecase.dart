@@ -5,7 +5,7 @@ class GetLastFiveDaysUseCase {
   final WeatherRepository repository;
   GetLastFiveDaysUseCase({required this.repository});
   
-  Future<WeatherEntity> execute() {
-    return repository.getLastFiveDays();
+  Future<WeatherEntity> execute({String? cityName}) {
+    return repository.getLastFiveDays(cityName: cityName);
   }
 }

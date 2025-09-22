@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:grupo_digital_test/config/di/locator.dart';
+import 'package:grupo_digital_test/data/datasources/location_datasource.dart';
+import 'package:grupo_digital_test/data/services/location_service.dart';
 import 'package:grupo_digital_test/domain/entities/weather_entity.dart';
 import 'package:grupo_digital_test/domain/usescases/get_last_five_days_usecase.dart';
 import 'package:grupo_digital_test/domain/usescases/get_weather_usecase.dart';
@@ -22,10 +24,18 @@ class WeatherProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  // Estados de ubicación
+  LocationPermissionStatus _locationStatus = LocationPermissionStatus.denied;
+  LocationPermissionStatus get locationStatus => _locationStatus;
+
   bool get hasWeatherData => _weather != null;
   bool get hasLastFiveDaysData => _lastFiveDaysWeather != null;
+  bool get isLocationGranted => _locationStatus == LocationPermissionStatus.granted;
+
+  late final LocationService _locationService;
 
   WeatherProvider() {
+    _locationService = locator<LocationService>();
     _loadCachedWeatherData();
   }
 
@@ -59,8 +69,15 @@ class WeatherProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Obtener nombre de ciudad (desde GPS o por defecto)
+      String cityName = await _locationService.getCityNameForWeatherAPI();
+      
+      // Obtener estado de ubicación para el UI
+      final locationResult = await _locationService.getCurrentLocationResult();
+      _locationStatus = locationResult.status;
+
       final getWeatherUseCase = locator<GetWeatherUseCase>();
-      final response = await getWeatherUseCase.execute();
+      final response = await getWeatherUseCase.execute(cityName: cityName);
       _weather = response;
       _errorMessage = null;
       _hasInternetConnection = true;
@@ -83,8 +100,11 @@ class WeatherProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Obtener nombre de ciudad
+      String cityName = await _locationService.getCityNameForWeatherAPI();
+
       final getLastFiveDaysUseCase = locator<GetLastFiveDaysUseCase>();
-      final response = await getLastFiveDaysUseCase.execute();
+      final response = await getLastFiveDaysUseCase.execute(cityName: cityName);
       _lastFiveDaysWeather = response;
       _errorMessage = null;
       _hasInternetConnection = true;
@@ -109,4 +129,46 @@ class WeatherProvider extends ChangeNotifier {
   Future<void> refreshData() async {
     await fetchWeather();
   }
+
+  /// Solicita permisos de ubicación manualmente
+  Future<void> requestLocationPermission() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final locationResult = await _locationService.getCurrentLocationResult();
+      _locationStatus = locationResult.status;
+      
+      if (locationResult.status == LocationPermissionStatus.granted) {
+        
+        await fetchWeather();
+      } else {
+        _errorMessage = locationResult.errorMessage;
+      }
+    } catch (e) {
+      _errorMessage = 'Error al solicitar permisos: ${e.toString()}';
+    }
+    
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> openAppSettings() async {
+    await _locationService.openAppSettings();
+  }
+
+  String getLocationErrorMessage() {
+    switch (_locationStatus) {
+      case LocationPermissionStatus.denied:
+        return 'Se necesitan permisos de ubicación para mostrar el clima de tu área actual.';
+      case LocationPermissionStatus.deniedForever:
+        return 'Los permisos de ubicación están denegados permanentemente. Ve a Configuración para habilitarlos.';
+      case LocationPermissionStatus.disabled:
+        return 'El GPS está deshabilitado. Por favor habilítalo en Configuración.';
+      case LocationPermissionStatus.granted:
+        return '';
+    }
+  }
+
+  bool get shouldShowLocationSettings => _locationStatus == LocationPermissionStatus.deniedForever;
 }

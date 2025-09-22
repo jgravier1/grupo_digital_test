@@ -18,7 +18,6 @@ class FavoritesProvider extends ChangeNotifier {
     _loadFavorites();
   }
 
-  /// Carga los favoritos desde SharedPreferences
   Future<void> _loadFavorites() async {
     _isLoading = true;
     _errorMessage = null;
@@ -42,7 +41,6 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
-  /// Guarda los favoritos en SharedPreferences
   Future<void> _saveFavorites() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -60,21 +58,17 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
-  /// Verifica si un evento es favorito
   bool isFavorite(String eventId) {
     return _favoriteEvents.any((event) => event.id == eventId);
   }
 
-  /// Alterna el estado de favorito de un evento
   Future<void> toggleFavorite(EventEntity event) async {
     try {
       final existingIndex = _favoriteEvents.indexWhere((e) => e.id == event.id);
       
       if (existingIndex >= 0) {
-        // Remover de favoritos
         _favoriteEvents.removeAt(existingIndex);
       } else {
-        // Agregar a favoritos
         _favoriteEvents.add(event);
       }
       
@@ -89,14 +83,12 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
-  /// Agrega un evento a favoritos
   Future<void> addToFavorites(EventEntity event) async {
     if (!isFavorite(event.id)) {
       await toggleFavorite(event);
     }
   }
 
-  /// Remueve un evento de favoritos
   Future<void> removeFromFavorites(String eventId) async {
     final event = _favoriteEvents.firstWhere(
       (e) => e.id == eventId,
@@ -105,14 +97,12 @@ class FavoritesProvider extends ChangeNotifier {
     await toggleFavorite(event);
   }
 
-  /// Limpia todos los favoritos
   Future<void> clearAllFavorites() async {
     _favoriteEvents.clear();
     notifyListeners();
     await _saveFavorites();
   }
 
-  /// Refresca los favoritos desde SharedPreferences
   Future<void> refreshFavorites() async {
     await _loadFavorites();
   }

@@ -1,6 +1,6 @@
 import 'package:grupo_digital_test/data/models/weather_response_model.dart';
 
 abstract interface class WeatherDataSource {
-  Future<WeatherResponseModel> getWeather();
-  Future<WeatherResponseModel> getLastFiveDays();
+  Future<WeatherResponseModel> getWeather({String? cityName});
+  Future<WeatherResponseModel> getLastFiveDays({String? cityName});
 }

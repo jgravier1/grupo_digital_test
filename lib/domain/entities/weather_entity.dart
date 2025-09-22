@@ -1,5 +1,6 @@
 class WeatherEntity {
   final String location;
+  final String address;
   final double temperature;
   final String condition;
   final double humidity;
@@ -19,9 +20,11 @@ class WeatherEntity {
   final String icon;
   final double latitude;
   final double longitude;
+  
 
   WeatherEntity({
     required this.location,
+    required this.address,
     required this.temperature,
     required this.condition,
     required this.humidity,
@@ -46,6 +49,7 @@ class WeatherEntity {
   Map<String, dynamic> toJson() {
     return {
       'location': location,
+      'address': address,
       'temperature': temperature,
       'condition': condition,
       'humidity': humidity,
@@ -71,6 +75,7 @@ class WeatherEntity {
   factory WeatherEntity.fromJson(Map<String, dynamic> json) {
     return WeatherEntity(
       location: json['location'] ?? '',
+      address: json['address'] ?? '',
       temperature: (json['temperature'] ?? 0.0).toDouble(),
       condition: json['condition'] ?? '',
       humidity: (json['humidity'] ?? 0.0).toDouble(),

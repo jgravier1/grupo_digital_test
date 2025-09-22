@@ -7,7 +7,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 class WeatherDataSourceImpl implements WeatherDataSource {
   final Dio dio;
   final String apiKey = dotenv.env['API_KEY'] ?? '';
-  static const String baseUrl =
+  final String baseUrl = dotenv.env['API_BASE_URL'] ?? 
       'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/';
 
   WeatherDataSourceImpl({required this.dio});

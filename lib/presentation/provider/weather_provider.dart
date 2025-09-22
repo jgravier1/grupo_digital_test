@@ -49,16 +49,37 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> _saveLastFiveDaysData(WeatherEntity lastFiveDaysWeather) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('cached_last_five_days', jsonEncode(lastFiveDaysWeather.toJson()));
+      print('Datos de últimos 5 días guardados en caché exitosamente');
+    } catch (e) {
+      print('Error guardando datos de últimos 5 días en caché: $e');
+    }
+  }
+
   Future<void> _loadCachedWeatherData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      
+      // Cargar datos del clima actual
       final cachedWeather = prefs.getString('cached_weather');
       if (cachedWeather != null) {
         final weatherJson = jsonDecode(cachedWeather) as Map<String, dynamic>;
         _weather = WeatherEntity.fromJson(weatherJson);
         print('Datos cargados desde caché: ${_weather?.location}');
-        notifyListeners();
       }
+      
+      // Cargar datos de últimos 5 días
+      final cachedLastFiveDays = prefs.getString('cached_last_five_days');
+      if (cachedLastFiveDays != null) {
+        final lastFiveDaysJson = jsonDecode(cachedLastFiveDays) as Map<String, dynamic>;
+        _lastFiveDaysWeather = WeatherEntity.fromJson(lastFiveDaysJson);
+        print('Datos de últimos 5 días cargados desde caché: ${_lastFiveDaysWeather?.location}');
+      }
+      
+      notifyListeners();
     } catch (e) {
       print('Error cargando datos en caché: $e');
     }
@@ -108,6 +129,9 @@ class WeatherProvider extends ChangeNotifier {
       _lastFiveDaysWeather = response;
       _errorMessage = null;
       _hasInternetConnection = true;
+
+      // Guardar datos en caché
+      await _saveLastFiveDaysData(response);
     } catch (e) {
       if (e.toString().contains('Sin conexión a internet')) {
         _errorMessage = 'Sin conexión a internet';

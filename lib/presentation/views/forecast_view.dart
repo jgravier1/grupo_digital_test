@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grupo_digital_test/presentation/provider/weather_provider.dart';
 import 'package:grupo_digital_test/presentation/widgets/forecast_card.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class ForecastView extends StatefulWidget {
   const ForecastView({super.key});
@@ -145,7 +146,7 @@ class _ForecastViewState extends State<ForecastView> {
                               min: '${day.tempmin.round()}°',
                               max: '${day.tempmax.round()}°',
                               precipitation: '${day.precip}mm',
-                              day: day.datetime.toString(),
+                              day: _formatDate(day.datetime),
                             );
                           },
                         ),
@@ -159,6 +160,12 @@ class _ForecastViewState extends State<ForecastView> {
         },
       ),
     );
+  }
+
+  /// Formatea la fecha para mostrar solo día, mes y año limpio
+  String _formatDate(DateTime dateTime) {
+    final formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(dateTime);
   }
 
   IconData getWeatherIcon(String icon) {

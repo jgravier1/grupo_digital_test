@@ -209,10 +209,10 @@ class _EventsViewState extends State<EventsView> {
                   icon: Icons.water_drop_outlined,
                 ),
                 _IndicatorWidget(
-                  title: 'Precipitación',
-                  value: '${provider.precipProb}%',
+                  title: 'Sensación térmica',
+                  value: '${provider.feelsLike}°C',
                   subtitle: '',
-                  icon: Icons.cloud_outlined,
+                  icon: Icons.thermostat,
                 ),
               ],
             ),

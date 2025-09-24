@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:grupo_digital_test/config/di/locator.dart';
 import 'package:grupo_digital_test/data/datasources/location_datasource.dart';
 import 'package:grupo_digital_test/data/services/location_service.dart';
@@ -31,12 +33,21 @@ class WeatherProvider extends ChangeNotifier {
   bool get hasWeatherData => _weather != null;
   bool get hasLastFiveDaysData => _lastFiveDaysWeather != null;
   bool get isLocationGranted => _locationStatus == LocationPermissionStatus.granted;
+  
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   late final LocationService _locationService;
 
   WeatherProvider() {
     _locationService = locator<LocationService>();
     _loadCachedWeatherData();
+    _listenToConnectivityChanges();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _saveWeatherData(WeatherEntity weather) async {
@@ -76,7 +87,6 @@ class WeatherProvider extends ChangeNotifier {
       if (cachedLastFiveDays != null) {
         final lastFiveDaysJson = jsonDecode(cachedLastFiveDays) as Map<String, dynamic>;
         _lastFiveDaysWeather = WeatherEntity.fromJson(lastFiveDaysJson);
-        print('Datos de últimos 5 días cargados desde caché: ${_lastFiveDaysWeather?.location}');
       }
       
       notifyListeners();
@@ -90,10 +100,8 @@ class WeatherProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Obtener nombre de ciudad (desde GPS o por defecto)
       String cityName = await _locationService.getCityNameForWeatherAPI();
       
-      // Obtener estado de ubicación para el UI
       final locationResult = await _locationService.getCurrentLocationResult();
       _locationStatus = locationResult.status;
 
@@ -121,7 +129,6 @@ class WeatherProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Obtener nombre de ciudad
       String cityName = await _locationService.getCityNameForWeatherAPI();
 
       final getLastFiveDaysUseCase = locator<GetLastFiveDaysUseCase>();
@@ -130,7 +137,6 @@ class WeatherProvider extends ChangeNotifier {
       _errorMessage = null;
       _hasInternetConnection = true;
 
-      // Guardar datos en caché
       await _saveLastFiveDaysData(response);
     } catch (e) {
       if (e.toString().contains('Sin conexión a internet')) {
@@ -154,7 +160,6 @@ class WeatherProvider extends ChangeNotifier {
     await fetchWeather();
   }
 
-  /// Solicita permisos de ubicación manualmente
   Future<void> requestLocationPermission() async {
     _isLoading = true;
     notifyListeners();
@@ -195,4 +200,56 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   bool get shouldShowLocationSettings => _locationStatus == LocationPermissionStatus.deniedForever;
+
+  void _listenToConnectivityChanges() {
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
+      (List<ConnectivityResult> results) {
+        _handleConnectivityChange(results);
+      },
+    );
+    
+    _checkInitialConnectivity();
+  }
+
+  Future<void> _checkInitialConnectivity() async {
+    try {
+      final result = await Connectivity().checkConnectivity();
+      _handleConnectivityChange(result);
+    } catch (e) {
+      print('❌ Error verificando conectividad inicial: $e');
+    }
+  }
+
+  void _handleConnectivityChange(List<ConnectivityResult> results) {
+    final wasConnected = _hasInternetConnection;
+    final isConnected = _isConnectedToInternet(results);
+    
+    // Solo procesar si el estado cambió
+    if (wasConnected != isConnected) {
+      _hasInternetConnection = isConnected;
+      
+      print('🌐 Cambio de conectividad detectado: $isConnected');
+      
+      if (!isConnected) {
+        // Se perdió la conexión
+        _errorMessage = 'Sin conexión a internet';
+        print('📵 Conexión perdida - mostrando datos del caché');
+      } else {
+        // Se recuperó la conexión
+        _errorMessage = null;
+        print('📶 Conexión recuperada');
+      }
+      
+      notifyListeners();
+    }
+  }
+
+  bool _isConnectedToInternet(List<ConnectivityResult> results) {
+    return results.any((result) => 
+      result == ConnectivityResult.wifi ||
+      result == ConnectivityResult.mobile
+    );
+  }
+
+
 }

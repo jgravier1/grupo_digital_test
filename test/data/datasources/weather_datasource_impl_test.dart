@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:grupo_digital_test/data/datasources/weather_datasource_impl.dart';
 import 'package:grupo_digital_test/data/models/weather_response_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

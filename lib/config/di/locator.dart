@@ -13,6 +13,10 @@ import 'package:grupo_digital_test/domain/usescases/get_last_five_days_usecase.d
 final GetIt locator = GetIt.instance;
 
 void setupServiceLocator() {
+  if (locator.isRegistered<Dio>()) {
+    return;
+  }
+
   // External
   locator.registerLazySingleton<Dio>(() => Dio());
 

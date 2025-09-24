@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:grupo_digital_test/presentation/provider/weather_provider.dart';
 import 'package:grupo_digital_test/data/datasources/location_datasource.dart';
-import 'package:grupo_digital_test/domain/entities/weather_entity.dart';
-import 'package:grupo_digital_test/config/di/locator.dart';
 import 'package:grupo_digital_test/data/services/location_service.dart';
 import 'package:grupo_digital_test/domain/usescases/get_weather_usecase.dart';
 import 'package:grupo_digital_test/domain/usescases/get_last_five_days_usecase.dart';
